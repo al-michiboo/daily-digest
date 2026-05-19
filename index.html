@@ -12,6 +12,18 @@
     header h1 { font-size: 2rem; color: #58a6ff; }
     header p { color: #8b949e; margin-top: 0.5rem; }
     .updated { color: #3fb950; font-size: 0.85rem; }
+
+    /* Check-in widget */
+    .checkin { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 1.25rem; margin: 0 auto 2rem; max-width: 400px; text-align: center; }
+    .checkin h3 { color: #f0883e; margin-bottom: 0.75rem; }
+    .checkin-streak { font-size: 2rem; font-weight: bold; color: #f0883e; }
+    .checkin-streak span { color: #8b949e; font-size: 1rem; font-weight: normal; }
+    .checkin-days { margin: 0.5rem 0 1rem; color: #8b949e; font-size: 0.85rem; }
+    .checkin-btn { background: #3fb950; color: #0d1117; border: none; padding: 0.6rem 1.5rem; border-radius: 6px; font-size: 1rem; font-weight: bold; cursor: pointer; }
+    .checkin-btn:hover { background: #2ea043; }
+    .checkin-btn:disabled { background: #21262d; color: #8b949e; cursor: default; }
+    .checkin-history { margin-top: 0.75rem; font-size: 0.8rem; color: #8b949e; }
+
     h2 { color: #58a6ff; margin: 2rem 0 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid #21262d; display: flex; align-items: center; gap: 0.5rem; }
     .card { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 1.25rem; margin-bottom: 1rem; }
     .card h3 { color: #f0883e; margin-bottom: 0.5rem; font-size: 1rem; }
@@ -37,8 +49,18 @@
       <p>CTF Writeups &amp; Dutch A2 Study</p>
       <p class="updated">Last updated: al-michiboo via CI/CD</p>
     </header>
+
+    <div class="checkin">
+      <h3>Daily Check-in</h3>
+      <div class="checkin-streak" id="streak">-- <span>day streak</span></div>
+      <div class="checkin-days" id="daysLabel"></div>
+      <button class="checkin-btn" id="checkinBtn" onclick="doCheckin()">I studied today!</button>
+      <div class="checkin-history" id="history"></div>
+    </div>
+
     <h2>🛡️ CTF Writeups</h2>
-    <div id="ctf-content"><div class="card">
+    <div id="ctf-content">
+    <div class="card">
       <span class="day-badge">CTF</span>
       <h3>BKISC CTF 2026 — Cryptografie</h3>
       <div class="meta">2026-05-19</div>
@@ -48,9 +70,11 @@
       </div>
       <p>You get a weird encoded string that starts with an underscore. The only hint is a Java class name. This is NOT normal Base64 — it's Java AltBase64, used inside the JDK to safely store folder names on case-insensitive filesystems.</p>
       <ul>
-        <li>Notice the string only has lowercase letters and weird symbols like ! and quotes</li><li>This is NOT normal Base64 — it's Java AltBase64 from FileSystemPreferences</li><li>Read the OpenJDK source for that class — it shows the exact alphabet and how it works</li>
+        <li>Notice the string only has lowercase letters and weird symbols like ! and quotes</li>
+        <li>This is NOT normal Base64 — it's Java AltBase64 from FileSystemPreferences</li>
+        <li>Read the OpenJDK source for that class — it shows the exact alphabet and how it works</li>
       </ul>
-    
+    </div>
     <div class="card">
       <span class="day-badge">CTF</span>
       <h3>Caesar Cipher — MinneHack 2026</h3>
@@ -68,35 +92,89 @@
         <li>Flag: flag{ConfuseOrangeObligationParadeAbsentSurprise}</li>
       </ul>
     </div>
-</div></div>
+    </div>
 
     <hr class="section-sep">
 
     <h2>🇳🇱 Dutch A2 Study</h2>
-    <div id="dutch-content"><div class="card">
-      <span class="day-badge">CTF</span>
-      <h3>BKISC CTF 2026 — Cryptografie</h3>
-      <div class="meta">2026-05-19</div>
-      <div class="tags">
-        <span class="tag">Crypto</span>
-        <span class="tag">Easy</span>
-      </div>
-      <p>You get a weird encoded string that starts with an underscore. The only hint is a Java class name. This is NOT normal Base64 — it's Java AltBase64, used inside the JDK to safely store folder names on case-insensitive filesystems.</p>
-      <ul>
-        <li>Notice the string only has lowercase letters and weird symbols like ! and quotes</li><li>This is NOT normal Base64 — it's Java AltBase64 from FileSystemPreferences</li><li>Read the OpenJDK source for that class — it shows the exact alphabet and how it works</li>
-      </ul>
-    </div>
+    <div id="dutch-content">
     <div class="card dutch-card">
       <span class="day-badge">Dag 1</span>
       <h3>Zelfintroductie & Uitspraak Basics</h3>
-      <div class="meta">2026-05-19</div>
+      <div class="meta">2026-05-20</div>
       <p>Spreek hardop je volledige zelfintroductie (2 min). Oefen belangrijke basis zinnen. Focus op uitspraak: ei, ij, ui, g, r. Lees en luister oefeningen. KNM: Werk in Nederland.</p>
     </div>
-</div>
+    </div>
   </div>
+
   <script>
-    // Auto-refresh every 5 minutes to pick up new commits
-    setTimeout(() => location.reload(), 300000);
+    // Daily Check-in (cookie-based)
+    function getDates() {
+      var val = getCookie('study_dates');
+      return val ? val.split(',') : [];
+    }
+    function saveDates(dates) {
+      setCookie('study_dates', dates.join(','), 365);
+    }
+    function getCookie(name) {
+      var match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+      return match ? decodeURIComponent(match[2]) : null;
+    }
+    function setCookie(name, val, days) {
+      var exp = new Date();
+      exp.setTime(exp.getTime() + days * 86400000);
+      document.cookie = name + '=' + encodeURIComponent(val) + ';expires=' + exp.toUTCString() + ';path=/';
+    }
+    function todayStr() {
+      var d = new Date();
+      return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+    }
+    function calcStreak(dates) {
+      if (!dates.length) return 0;
+      var sorted = dates.slice().sort().reverse();
+      var count = 0;
+      var d = new Date();
+      for (var i = 0; i < 60; i++) {
+        var s = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+        if (sorted.includes(s)) { count++; d.setDate(d.getDate()-1); }
+        else break;
+      }
+      return count;
+    }
+
+    var dates = getDates();
+    var streak = calcStreak(dates);
+    var today = todayStr();
+    var checkedToday = dates.includes(today);
+
+    document.getElementById('streak').innerHTML = streak + ' <span>day streak</span>';
+    document.getElementById('daysLabel').textContent = checkedToday ? ('Checked in today! (' + today + ')') : ('Last: ' + (dates.length ? dates[dates.length-1] : 'never'));
+    var btn = document.getElementById('checkinBtn');
+    btn.disabled = checkedToday;
+    btn.textContent = checkedToday ? 'Done for today! ✅' : 'I studied today!';
+
+    var recent = getDates().slice(-5).reverse();
+    document.getElementById('history').textContent = recent.length ? ('Recent: ' + recent.join(', ')) : '';
+
+    function doCheckin() {
+      var dates = getDates();
+      var today = todayStr();
+      if (!dates.includes(today)) {
+        dates.push(today);
+        saveDates(dates);
+      }
+      var streak = calcStreak(dates);
+      document.getElementById('streak').innerHTML = streak + ' <span>day streak</span>';
+      document.getElementById('daysLabel').textContent = 'Checked in today! (' + todayStr() + ')';
+      var btn = document.getElementById('checkinBtn');
+      btn.disabled = true;
+      btn.textContent = 'Done for today! ✅';
+      var recent = getDates().slice(-5).reverse();
+      document.getElementById('history').textContent = 'Recent: ' + recent.join(', ');
+    }
+
+    // Auto-refresh every 5 minutes
+    setTimeout(function(){ location.reload(); }, 300000);
   </script>
 </body>
 </html>
