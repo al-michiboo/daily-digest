@@ -97,7 +97,25 @@
         <li>The correct shift reveals readable English text — that's your flag!</li>
         <li>Flag: flag{ConfuseOrangeObligationParadeAbsentSurprise}</li>
       </ul>
+    
+    <div class="card">
+      <span class="day-badge">CTF</span>
+      <h3>Base — Base64 Encoding</h3>
+      <div class="meta">2026-05-19</div>
+      <div class="tags">
+        <span class="tag">Crypto</span>
+        <span class="tag">Easy</span>
+      </div>
+      <p>You intercept a strange encoded message. The challenge name and the string look give it away — it's a classic Base64 cipher. You just need to decode it to reveal the flag hidden inside.</p>
+      <ul>
+        <li>Look at the encoded string — it has letters, numbers, and = signs at the end. This is the fingerprint of Base64.</li>
+        <li>Base64 encodes binary data as ASCII text using 64 characters (A-Z, a-z, 0-9, +, /). You'll see it everywhere in CTFs.</li>
+        <li>Use an online decoder or run: echo '<encoded>' | base64 -d</li>
+        <li>Decode it — the flag is inside! For this challenge: KubSTU(b4s3_64_1s_the_ba5i5)</li>
+        <li>Key lesson: Base, Base32, Base64 — always try each one when you see encoded text. They look similar but decode differently.</li>
+      </ul>
     </div>
+</div>
     </div>
 
     <hr class="section-sep">
