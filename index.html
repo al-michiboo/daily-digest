@@ -50,7 +50,25 @@
       <ul>
         <li>Notice the string only has lowercase letters and weird symbols like ! and quotes</li><li>This is NOT normal Base64 — it's Java AltBase64 from FileSystemPreferences</li><li>Read the OpenJDK source for that class — it shows the exact alphabet and how it works</li>
       </ul>
-    </div></div>
+    
+    <div class="card">
+      <span class="day-badge">CTF</span>
+      <h3>Caesar Cipher — MinneHack 2026</h3>
+      <div class="meta">2026-05-19</div>
+      <div class="tags">
+        <span class="tag">Crypto</span>
+        <span class="tag">Easy</span>
+      </div>
+      <p>A Caesar cipher is one of the oldest tricks in the book — just shift every letter by the same amount. Since there are only 25 possible shifts (A→B, A→C, … A→Z), you can literally try them all and read off the one that makes sense. No advanced math needed!</p>
+      <ul>
+        <li>You get an encrypted string: something like 'NggnpuRapragPurpx...' — looks like gibberish.</li>
+        <li>You know it's a Caesar cipher, so every letter has been shifted by the same number of positions in the alphabet.</li>
+        <li>There are only 25 possible shifts. Write a quick script to try each one, or use an online decoder.</li>
+        <li>The correct shift reveals readable English text — that's your flag!</li>
+        <li>Flag: flag{ConfuseOrangeObligationParadeAbsentSurprise}</li>
+      </ul>
+    </div>
+</div></div>
 
     <hr class="section-sep">
 
