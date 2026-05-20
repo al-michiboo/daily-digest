@@ -51,8 +51,8 @@
     </header>
 
     <div style="background:#1a2e1a;border:1px solid #3fb95044;border-radius:8px;padding:1rem;margin-bottom:2rem;text-align:center;">
-      <div style="color:#3fb950;font-weight:bold;font-size:1.1rem;">Dutch A2 Inburgeringsexamen — 7-Day Study Plan</div>
-      <div style="color:#8b949e;font-size:0.85rem;margin-top:0.3rem;">Exam: May 15, 2026 &nbsp;|&nbsp; 7 days of focused prep &nbsp;|&nbsp; 8am daily reminders to WeChat</div>
+      <div style="color:#3fb950;font-weight:bold;font-size:1.1rem;">🇳🇱 Dutch A2 Inburgeringsexamen Prep</div>
+      <div style="color:#8b949e;font-size:0.85rem;margin-top:0.3rem;">Study plan completed · Exam: May 15, 2026</div>
       <a href="https://al-michiboo.github.io/daily-digest/dutch-a2-study.html" style="display:inline-block;margin-top:0.75rem;background:#3fb950;color:#0d1117;padding:0.5rem 1.25rem;border-radius:6px;font-weight:bold;text-decoration:none;">View Study Plan →</a>
     </div>
 
@@ -64,58 +64,16 @@
       <div class="checkin-history" id="history"></div>
     </div>
 
+    <div style="background:#161b22;border:1px solid #30363d;border-radius:8px;padding:1rem;margin-bottom:1rem;text-align:center;">
+      <div style="color:#f0883e;font-weight:bold;">19 CTF Challenges</div>
+      <div style="color:#8b949e;font-size:0.8rem;margin-top:0.3rem;">Web, Crypto, Forensics, Network, Binary, Misc</div>
+      <a href="https://al-michiboo.github.io/daily-digest/ctf-writeups.html" style="display:inline-block;margin-top:0.75rem;background:#f0883e;color:#0d1117;padding:0.5rem 1.25rem;border-radius:6px;font-weight:bold;text-decoration:none;">View All Writeups →</a>
+    </div>
+
     <h2>🛡️ CTF Writeups</h2>
-    <div id="ctf-content">
-    <div class="card">
-      <span class="day-badge">CTF</span>
-      <h3>BKISC CTF 2026 — Cryptografie</h3>
-      <div class="meta">2026-05-19</div>
-      <div class="tags">
-        <span class="tag">Crypto</span>
-        <span class="tag">Easy</span>
-      </div>
-      <p>You get a weird encoded string that starts with an underscore. The only hint is a Java class name. This is NOT normal Base64 — it's Java AltBase64, used inside the JDK to safely store folder names on case-insensitive filesystems.</p>
-      <ul>
-        <li>Notice the string only has lowercase letters and weird symbols like ! and quotes</li>
-        <li>This is NOT normal Base64 — it's Java AltBase64 from FileSystemPreferences</li>
-        <li>Read the OpenJDK source for that class — it shows the exact alphabet and how it works</li>
-      </ul>
+<div id="ctf-content">
+      <p class="empty">Visit the full CTF Writeups page above for all 19 challenges.</p>
     </div>
-    <div class="card">
-      <span class="day-badge">CTF</span>
-      <h3>Caesar Cipher — MinneHack 2026</h3>
-      <div class="meta">2026-05-19</div>
-      <div class="tags">
-        <span class="tag">Crypto</span>
-        <span class="tag">Easy</span>
-      </div>
-      <p>A Caesar cipher is one of the oldest tricks in the book — just shift every letter by the same amount. Since there are only 25 possible shifts (A→B, A→C, … A→Z), you can literally try them all and read off the one that makes sense. No advanced math needed!</p>
-      <ul>
-        <li>You get an encrypted string: something like 'NggnpuRapragPurpx...' — looks like gibberish.</li>
-        <li>You know it's a Caesar cipher, so every letter has been shifted by the same number of positions in the alphabet.</li>
-        <li>There are only 25 possible shifts. Write a quick script to try each one, or use an online decoder.</li>
-        <li>The correct shift reveals readable English text — that's your flag!</li>
-        <li>Flag: flag{ConfuseOrangeObligationParadeAbsentSurprise}</li>
-      </ul>
-    
-    <div class="card">
-      <span class="day-badge">CTF</span>
-      <h3>Base — Base64 Encoding</h3>
-      <div class="meta">2026-05-19</div>
-      <div class="tags">
-        <span class="tag">Crypto</span>
-        <span class="tag">Easy</span>
-      </div>
-      <p>You intercept a strange encoded message. The challenge name and the string look give it away — it's a classic Base64 cipher. You just need to decode it to reveal the flag hidden inside.</p>
-      <ul>
-        <li>Look at the encoded string — it has letters, numbers, and = signs at the end. This is the fingerprint of Base64.</li>
-        <li>Base64 encodes binary data as ASCII text using 64 characters (A-Z, a-z, 0-9, +, /). You'll see it everywhere in CTFs.</li>
-        <li>Use an online decoder or run: echo '<encoded>' | base64 -d</li>
-        <li>Decode it — the flag is inside! For this challenge: KubSTU(b4s3_64_1s_the_ba5i5)</li>
-        <li>Key lesson: Base, Base32, Base64 — always try each one when you see encoded text. They look similar but decode differently.</li>
-      </ul>
-    </div>
-</div>
     </div>
 
     <hr class="section-sep">
